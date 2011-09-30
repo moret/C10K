@@ -2,16 +2,21 @@ import json
 import tornado.ioloop
 import tornado.web
 import tornado.httpclient
+from tornado.web import asynchronous
 
 search = 'http://search.twitter.com/search.json?q=pythonbrasil&result_type=mixed&count=1'
 
 class MainHandler(tornado.web.RequestHandler):
+
+    @asynchronous
     def get(self):
         self.write("Hello blocking Twitter!\n")
-        http_client = tornado.httpclient.HTTPClient()
-        response = http_client.fetch(search)
+        http_client = tornado.httpclient.AsyncHTTPClient()
+        response = http_client.fetch(search, self.handle_response)
+
+    def handle_response(self, response):
         last_tweet = json.loads(response.body)['results'][0]['text']
-        self.write(last_tweet)
+        self.finish(last_tweet)
 
 application = tornado.web.Application([
     (r"/", MainHandler),
