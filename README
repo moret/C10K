@@ -1,0 +1,24 @@
+Some examples on using Tornado in a non-blocking way.
+Don't forget to run pip install -r requirements.pip (and yes, you should be
+using virtualenv)
+
+===
+
+First example: access a REST service with Tornado's non blocking HTTP client.
+
+In one terminal: python server.py
+In other terminals: curl localhost:8888
+If you want to stress it: ab -c 2 -n 50 -t 30 localhost:8888/
+
+===
+
+Second example: use a resque like (dreque) to handle long jobs.
+
+Install and run redis-server;
+In one terminal: python server_with_dreque.py
+In another terminal: python worker_with_dreque.py
+In other terminals: curl localhost:8888
+If you want to stress it: ab -c 2 -n 50 -t 30 localhost:8888/
+
+Known bug: the very first work sent to the queue is blocking until the worker
+is killed.
